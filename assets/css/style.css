@@ -422,31 +422,6 @@ h1, h2, h3 {
   color: var(--ink-faint);
 }
 
-/* --------------------------------------------------------------------------
-   10. 音樂播放器 .audio-player
-   -------------------------------------------------------------------------- */
-.audio-player {
-  max-width: 40em;
-  margin: 0 auto 3.2rem;
-  padding: 0.7rem 1.1rem;
-  background: linear-gradient(180deg, #fdf9ee 0%, #f3e8cd 100%);
-  border: 1px solid rgba(74, 59, 36, 0.15);
-  border-radius: 999px;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.75),
-    0 6px 14px -10px rgba(74, 59, 36, 0.32);
-}
-
-.audio-player audio {
-  width: 100%;
-  display: block;
-}
-
-/* Chromium 控制列去底色，讓紙感容器透出 */
-.audio-player audio::-webkit-media-controls-panel {
-  background-color: transparent;
-}
-
 /* 詳情頁底部「回到詩集首頁」連結（reset 下 margin 歸零，補間距；顏色繼承全域 a） */
 .back-link {
   display: inline-block;
@@ -520,10 +495,6 @@ h1, h2, h3 {
   .poem-body .poem-text {
     font-size: 1.08rem;
     line-height: 2;
-  }
-
-  .audio-player {
-    border-radius: 16px;
   }
 
   .year-chip {

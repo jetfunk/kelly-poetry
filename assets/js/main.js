@@ -2,7 +2,7 @@
    Kelly 的詩詞 — 前端渲染邏輯
    --------------------------------------------------------------------------
    負責載入 data/poems.json，並於主頁渲染年份導航與詩作卡片、
-   於詳情頁渲染單一詩作（含配圖與音樂）。
+   於詳情頁渲染單一詩作（含配圖）。
    -------------------------------------------------------------------------- */
 
 // 詩作資料來源（相對根目錄）
@@ -10,8 +10,8 @@ const POEMS_URL = 'data/poems.json';
 
 /**
  * 載入詩作資料。
- * 注意：data/poems.json 每筆不含 image/audio 欄位，這裡依命名規則動態補上
- * （assets/images/poems/<id>.jpg 與 assets/audio/poems/<id>.wav）。
+ * 注意：data/poems.json 每筆不含 image 欄位，這裡依命名規則動態補上
+ * （assets/images/poems/<id>.jpg）。
  * 因 id 含中文與日文全形字元，以 encodeURIComponent 確保路徑正確。
  */
 async function loadPoems() {
@@ -19,7 +19,6 @@ async function loadPoems() {
   const poems = await res.json();
   poems.forEach(p => {
     p.image = `assets/images/poems/${encodeURIComponent(p.id)}.jpg`;
-    p.audio = `assets/audio/poems/${encodeURIComponent(p.id)}.wav`;
   });
   return poems;
 }
@@ -71,7 +70,7 @@ function showYear(year, poems) {
 }
 
 /**
- * 詳情頁渲染：依網址 ?id= 顯示單一詩作（含配圖、詩文、詮釋資料與音樂）。
+ * 詳情頁渲染：依網址 ?id= 顯示單一詩作（含配圖、詩文與詮釋資料）。
  */
 async function renderDetail() {
   const params = new URLSearchParams(location.search);
@@ -99,9 +98,6 @@ async function renderDetail() {
     <div class="meta">
       <span class="item"><span class="label">日期</span>${p.date}</span>
       ${p.location ? `<span class="item"><span class="label">地點</span>${p.location}</span>` : ''}
-    </div>
-    <div class="audio-player">
-      <audio controls preload="none" src="${p.audio}"></audio>
     </div>
     <p class="back-link"><a href="index.html">← 回到詩集首頁</a></p>`;
 }
