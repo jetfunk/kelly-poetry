@@ -1,0 +1,542 @@
+/* ==========================================================================
+   Kelly 的詩詞 — 暖紙手札主題 (warm paper journal)
+   --------------------------------------------------------------------------
+   純 CSS、零外部依賴：紙紋以 CSS 漸層疊加而成，不依賴外部圖片或字體 CDN。
+   色調：暖紙底、暖墨褐文字、卡其分隔線、朱紅印章點綴。
+   字體：標題楷體（DFKai-SB / Kaiti SC / STKaiti），內文宋體（Noto Serif TC / Songti）。
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. 根變數：調色盤、字體與尺寸
+   -------------------------------------------------------------------------- */
+:root {
+  /* 暖紙色系 */
+  --paper:         #faf3e3;   /* 暖紙底色（body 指定值） */
+  --paper-deep:    #efe4c9;   /* 深一層的紙（圖缺省底、卡角） */
+  --paper-light:   #fffdf5;   /* 亮面紙（卡片面） */
+  --ink:           #4a3b24;   /* 暖墨褐（主文字，body 指定值） */
+  --ink-soft:      #85755a;   /* 淡墨（次要文字） */
+  --ink-faint:     #b0a185;   /* 極淡墨（日期、註記） */
+  --khaki:         #c9b990;   /* 卡其分隔線 */
+  --cinnabar:      #a03028;   /* 朱紅 */
+  --cinnabar-deep: #7c1f19;   /* 深朱紅（印章邊） */
+
+  /* 字體（本機既有字型清單） */
+  --font-kai:  "DFKai-SB", "Kaiti SC", "STKaiti", "BiauKai", "KaiTi", "楷體", "AR PL UKai CN", serif;
+  --font-song: "Noto Serif TC", "Songti SC", "PMingLiU", "MingLiU", "SimSun", "宋體", serif;
+
+  /* 版面 */
+  --content-max: 1080px;
+  --gap: 1.8rem;
+
+  /* 毛邊圓角（不規則、仿紙張裁切） */
+  --radius-card:    12px 22px 14px 24px / 24px 12px 22px 14px;
+  --radius-chip:    4px 10px 5px 11px / 10px 4px 11px 5px;
+  --radius-seal:    7px 11px 8px 12px / 11px 7px 12px 8px;
+
+  /* 紙感陰影（分層：貼地細線 + 暈散） */
+  --shadow-soft:    0 3px 0 rgba(74, 59, 36, 0.06), 0 14px 28px -16px rgba(74, 59, 36, 0.26);
+  --shadow-hover:   0 5px 0 rgba(74, 59, 36, 0.07), 0 24px 40px -18px rgba(74, 59, 36, 0.32);
+}
+
+/* --------------------------------------------------------------------------
+   2. 重置與基底
+   -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;   /* 年份紙籤跳轉時平滑捲動 */
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100vh;
+  font-family: var(--font-song);
+  font-size: 1rem;
+  line-height: 1.9;
+  color: var(--ink);
+  background-color: var(--paper);
+
+  /* 暖紙紋：柔光 + 細網點 + 橫縱纖維，全部以漸層疊出 */
+  background-image:
+    radial-gradient(ellipse 130% 85% at 50% 10%, rgba(255, 255, 255, 0.6) 0%, transparent 62%),
+    radial-gradient(rgba(74, 59, 36, 0.026) 1px, transparent 1px),
+    repeating-linear-gradient(0deg, rgba(74, 59, 36, 0.012) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(90deg, rgba(74, 59, 36, 0.012) 0 1px, transparent 1px 3px);
+  background-size: auto, 7px 7px, 100% 4px, 4px 100%;
+
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  color: var(--cinnabar);
+  text-decoration: none;
+}
+
+::selection {
+  background: rgba(160, 48, 40, 0.16);
+  color: var(--ink);
+}
+
+/* --------------------------------------------------------------------------
+   3. 共用排版
+   -------------------------------------------------------------------------- */
+h1, h2, h3 {
+  font-family: var(--font-kai);
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0.08em;
+  color: var(--ink);
+}
+
+/* 通用內容容器 */
+.wrapper {
+  width: min(var(--content-max), 92%);
+  margin-inline: auto;
+}
+
+/* 分隔線（卡其色系） */
+.divider {
+  height: 1px;
+  border: 0;
+  background: linear-gradient(90deg, transparent, var(--khaki), transparent);
+}
+
+/* --------------------------------------------------------------------------
+   4. 首頁主視覺 .hero
+   -------------------------------------------------------------------------- */
+.hero {
+  position: relative;
+  text-align: center;
+  padding: clamp(3.5rem, 10vw, 6.5rem) 1.5rem clamp(2.4rem, 6vw, 3.6rem);
+}
+
+/* 朱紅印章（hero 內放大並與標題留白） */
+.hero .seal {
+  width: 3.4rem;
+  height: 3.4rem;
+  font-size: 1.7rem;
+  margin-bottom: 1.3rem;
+}
+
+.hero h1 {
+  font-size: clamp(2.6rem, 6vw, 4.2rem);
+  letter-spacing: 0.18em;
+  margin-bottom: 0.5em;
+}
+
+.hero .subtitle,
+.hero p {
+  font-family: var(--font-song);
+  font-size: clamp(1rem, 2.2vw, 1.2rem);
+  color: var(--ink-soft);
+  letter-spacing: 0.34em;
+  text-indent: 0.34em;   /* 補償 letter-spacing 尾端空距，保持視覺置中 */
+  margin: 0 auto;
+}
+
+.hero::after {
+  content: "";
+  display: block;
+  width: 4.5rem;
+  height: 2px;
+  margin: 1.9rem auto 0;
+  background: linear-gradient(90deg, transparent, var(--khaki), transparent);
+}
+
+/* --------------------------------------------------------------------------
+   5. 年份導航列 .paper-nav 與紙籤 .year-chip
+   -------------------------------------------------------------------------- */
+.paper-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem 1.15rem;
+  padding: 1.2rem 1rem 1.9rem;
+  margin: 0 0 2.4rem;
+  list-style: none;
+}
+
+/* 便籤紙感年份籤：微旋轉、貼紙陰影、紙膠帶 */
+.year-chip {
+  position: relative;
+  display: inline-block;
+  appearance: none;
+  -webkit-appearance: none;
+  font-family: var(--font-kai);
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  color: var(--ink);
+  padding: 0.6em 1.05em;
+  background: linear-gradient(180deg, #fffdf3 0%, #f7ecc9 100%);
+  border: 1px solid rgba(74, 59, 36, 0.16);
+  border-radius: var(--radius-chip);
+  box-shadow:
+    0 3px 0 rgba(74, 59, 36, 0.1),
+    0 8px 14px -8px rgba(74, 59, 36, 0.3);
+  transform: rotate(-1.6deg);
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.24s ease, box-shadow 0.24s ease, background 0.24s ease;
+}
+
+/* 偶數籤反向微轉，呈現手貼便籤的自然錯落 */
+.year-chip:nth-child(even) {
+  transform: rotate(1.3deg);
+}
+
+/* 上緣紙膠帶 */
+.year-chip::before {
+  content: "";
+  position: absolute;
+  top: -0.4em;
+  left: 50%;
+  width: 2.3em;
+  height: 0.8em;
+  transform: translateX(-50%) rotate(-2deg);
+  background: rgba(201, 185, 144, 0.5);
+  border-radius: 2px;
+  box-shadow: 0 1px 2px rgba(74, 59, 36, 0.12);
+}
+
+.year-chip:hover,
+.year-chip:focus-visible {
+  transform: rotate(0deg) translateY(-2px);
+  box-shadow:
+    0 4px 0 rgba(74, 59, 36, 0.12),
+    0 12px 20px -10px rgba(74, 59, 36, 0.36);
+  outline: none;
+}
+
+/* 目前選中的年份 */
+.year-chip.is-active {
+  background: linear-gradient(180deg, #f7e1ab 0%, #ecd08e 100%);
+  border-color: rgba(160, 48, 40, 0.35);
+  color: var(--cinnabar-deep);
+}
+
+/* --------------------------------------------------------------------------
+   6. 詩作卡片 .poem-card 與網格
+   -------------------------------------------------------------------------- */
+.poem-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(250px, 100%), 1fr));
+  gap: var(--gap);
+  padding: 0.4rem 0 3.6rem;
+}
+
+.poem-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: linear-gradient(180deg, var(--paper-light) 0%, #f8efd8 100%);
+  border: 1px solid rgba(74, 59, 36, 0.13);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-soft);
+  color: inherit;
+  text-decoration: none;
+  transition: transform 0.28s ease, box-shadow 0.28s ease;
+}
+
+.poem-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-hover);
+}
+
+/* 縮圖（3:2，呼應 AI 圖橫式規格） */
+.poem-card .thumb {
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  background: var(--paper-deep);
+}
+
+.poem-card .thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.55s ease;
+}
+
+.poem-card:hover .thumb img {
+  transform: scale(1.05);
+}
+
+/* 卡片文字區 */
+.poem-card .card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  flex: 1;
+  padding: 1rem 1.15rem 1.2rem;
+}
+
+.poem-card h2 {
+  font-size: 1.28rem;
+  letter-spacing: 0.1em;
+}
+
+/* 一句摘錄 */
+.poem-card .excerpt {
+  font-size: 0.95rem;
+  color: var(--ink-soft);
+  line-height: 1.8;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* 卡片底部：年份 / 日期 */
+.poem-card .card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 0.6rem;
+  border-top: 1px dashed var(--khaki);
+  font-size: 0.84rem;
+  letter-spacing: 0.08em;
+  color: var(--ink-faint);
+}
+
+/* --------------------------------------------------------------------------
+   7. 詳情頁大圖區 .detail-hero
+   -------------------------------------------------------------------------- */
+.detail-hero {
+  position: relative;
+  overflow: hidden;
+  margin: 0 0 2.4rem;
+  background: var(--paper-deep);
+  border: 1px solid rgba(74, 59, 36, 0.13);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-soft);
+}
+
+.detail-hero img {
+  width: 100%;
+  height: clamp(260px, 42vw, 480px);
+  object-fit: cover;
+  object-position: center;
+}
+
+/* 覆於大圖底部的詩名 */
+.detail-hero .title {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 3rem 1.6rem 1.3rem;
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  color: #fff;
+  letter-spacing: 0.12em;
+  background: linear-gradient(180deg, transparent, rgba(40, 28, 10, 0.74));
+}
+
+/* --------------------------------------------------------------------------
+   8. 詩文主體 .poem-body
+   -------------------------------------------------------------------------- */
+.poem-body {
+  max-width: 40em;
+  margin: 0 auto 2.6rem;
+  padding: 0 1rem;
+}
+
+.poem-body .poem-title {
+  text-align: center;
+  font-size: clamp(1.7rem, 4vw, 2.2rem);
+  letter-spacing: 0.16em;
+  margin-bottom: 0.35em;
+}
+
+.poem-body .poem-date {
+  text-align: center;
+  font-size: 0.9rem;
+  letter-spacing: 0.22em;
+  color: var(--ink-faint);
+  margin-bottom: 2.2rem;
+}
+
+/* 詩文大字排版：保留換行、居中直排閱讀感 */
+.poem-body .poem-text {
+  font-family: var(--font-song);
+  font-size: clamp(1.15rem, 2.4vw, 1.35rem);
+  line-height: 2.15;
+  letter-spacing: 0.06em;
+  white-space: pre-line;
+  text-align: center;
+}
+
+/* 寫作註記 */
+.poem-body .note {
+  margin-top: 2.6rem;
+  padding: 0.9rem 1.2rem;
+  font-size: 0.95rem;
+  color: var(--ink-soft);
+  line-height: 1.9;
+  background: rgba(239, 228, 201, 0.55);
+  border-left: 3px solid var(--khaki);
+  border-radius: 0 10px 10px 0;
+}
+
+/* --------------------------------------------------------------------------
+   9. 詮釋資料 .meta（日期／地點）
+   -------------------------------------------------------------------------- */
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.4rem 2.4rem;
+  margin: 0 0 2.4rem;
+  padding: 1rem 1rem;
+  font-size: 0.98rem;
+  letter-spacing: 0.12em;
+  color: var(--ink-soft);
+  border-top: 1px solid var(--khaki);
+  border-bottom: 1px solid var(--khaki);
+}
+
+.meta .item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+}
+
+.meta .label {
+  color: var(--ink-faint);
+}
+
+/* --------------------------------------------------------------------------
+   10. 音樂播放器 .audio-player
+   -------------------------------------------------------------------------- */
+.audio-player {
+  max-width: 40em;
+  margin: 0 auto 3.2rem;
+  padding: 0.7rem 1.1rem;
+  background: linear-gradient(180deg, #fdf9ee 0%, #f3e8cd 100%);
+  border: 1px solid rgba(74, 59, 36, 0.15);
+  border-radius: 999px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.75),
+    0 6px 14px -10px rgba(74, 59, 36, 0.32);
+}
+
+.audio-player audio {
+  width: 100%;
+  display: block;
+}
+
+/* Chromium 控制列去底色，讓紙感容器透出 */
+.audio-player audio::-webkit-media-controls-panel {
+  background-color: transparent;
+}
+
+/* --------------------------------------------------------------------------
+   11. 朱紅印章 .seal
+   -------------------------------------------------------------------------- */
+.seal {
+  display: inline-grid;
+  place-items: center;
+  width: 2.6rem;
+  height: 2.6rem;
+  font-family: var(--font-kai);
+  font-size: 1.35rem;
+  font-weight: 600;
+  line-height: 1;
+  color: #fff;
+  background: var(--cinnabar);
+  border: 2px solid var(--cinnabar-deep);
+  border-radius: var(--radius-seal);
+  box-shadow:
+    inset 0 0 0 2px rgba(255, 255, 255, 0.55),   /* 內圈白框 */
+    inset 0 0 0 4px var(--cinnabar),
+    2px 3px 6px rgba(124, 31, 25, 0.35);
+  transform: rotate(-7deg);
+  user-select: none;
+}
+
+/* --------------------------------------------------------------------------
+   12. 行動裝置與縮放
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  .poem-card .excerpt {
+    -webkit-line-clamp: 3;
+  }
+
+  .meta {
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+}
+
+@media (max-width: 560px) {
+  /* 卡片網格窄螢幕單欄 */
+  .poem-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .hero {
+    padding-top: 2.8rem;
+    padding-bottom: 2rem;
+  }
+
+  .hero h1 {
+    letter-spacing: 0.12em;
+  }
+
+  /* 詳情頁圖片縮放：略矮，避免佔滿首屏 */
+  .detail-hero img {
+    height: clamp(220px, 56vw, 320px);
+  }
+
+  .detail-hero .title {
+    padding: 2rem 1.2rem 1rem;
+    font-size: 1.5rem;
+  }
+
+  .poem-body .poem-text {
+    font-size: 1.08rem;
+    line-height: 2;
+  }
+
+  .audio-player {
+    border-radius: 16px;
+  }
+
+  .year-chip {
+    font-size: 0.98rem;
+    padding: 0.55em 0.9em;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   13. 輔助：動態效果偏好
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}
