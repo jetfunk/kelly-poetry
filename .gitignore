@@ -1,0 +1,6 @@
+.superpowers/
+temp_output/
+test_output/
+tools/temp_*.py
+tools/test_*.py
+__pycache__/
