@@ -384,6 +384,7 @@ h1, h2, h3 {
 /* 寫作註記 */
 .poem-body .note {
   margin-top: 2.6rem;
+  white-space: pre-line;
   padding: 0.9rem 1.2rem;
   font-size: 0.95rem;
   color: var(--ink-soft);
@@ -444,6 +445,12 @@ h1, h2, h3 {
 /* Chromium 控制列去底色，讓紙感容器透出 */
 .audio-player audio::-webkit-media-controls-panel {
   background-color: transparent;
+}
+
+/* 詳情頁底部「回到詩集首頁」連結（reset 下 margin 歸零，補間距；顏色繼承全域 a） */
+.back-link {
+  display: inline-block;
+  margin-top: 2.5rem;
 }
 
 /* --------------------------------------------------------------------------

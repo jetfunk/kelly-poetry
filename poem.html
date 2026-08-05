@@ -14,7 +14,12 @@
   <script>
     // 待 defer 的 main.js 載入完成後，再渲染詩作詳情
     document.addEventListener('DOMContentLoaded', () => {
-      renderDetail().catch(err => console.error('載入詩作詳情失敗：', err));
+      renderDetail().catch(err => {
+        console.error('載入詩作詳情失敗：', err);
+        // file:// 直接開啟時 CORS 會擋下 fetch，將可讀提示寫入詳情區
+        document.getElementById('detail').innerHTML =
+          '詩作資料載入失敗。<br>請在專案資料夾執行 <code>python -m http.server 8000</code>，再用瀏覽器開啟 <code>http://127.0.0.1:8000/poem.html</code>。';
+      });
     });
   </script>
 </body>

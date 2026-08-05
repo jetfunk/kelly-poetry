@@ -25,7 +25,7 @@ async function loadPoems() {
 }
 
 /**
- * 主頁渲染：依年份建立導航紙籤，並顯示第一個（最新）年份的詩作。
+ * 主頁渲染：依年份建立導航紙籤，並依時間序顯示第一個年份的詩作。
  */
 function renderIndex(poems) {
   const years = [...new Set(poems.map(p => p.year))].sort();
