@@ -105,11 +105,18 @@ function showYear(year, poems, restoreScroll) {
     grid.appendChild(card);
   });
 
-  // 僅在返回首頁的首次渲染時還原捲動（雙 rAF 等卡片渲染完成）
+  // 僅在返回首頁的首次渲染時還原捲動（雙 rAF 等卡片渲染完成）。
+  // 以瞬間定位（scroll-behavior: auto）取代 smooth，避免返回時
+  // 產生「從頂端向下滑動」的動畫。
   if (restoreScroll) {
     requestAnimationFrame(() => requestAnimationFrame(() => {
       const y = sessionStorage.getItem(STORE_SCROLL);
-      if (y !== null) window.scrollTo(0, +y);
+      if (y !== null) {
+        const html = document.documentElement;
+        html.style.scrollBehavior = 'auto';
+        window.scrollTo(0, +y);
+        html.style.scrollBehavior = '';
+      }
     }));
   }
 }
