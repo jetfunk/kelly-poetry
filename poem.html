@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kelly 的詩詞</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="assets/js/main.js" defer></script>
+</head>
+<body>
+  <!-- 詳情頁內容：由 main.js 依網址 ?id= 渲染單一詩作 -->
+  <main id="detail" class="wrapper"></main>
+
+  <script>
+    // 待 defer 的 main.js 載入完成後，再渲染詩作詳情
+    document.addEventListener('DOMContentLoaded', () => {
+      renderDetail().catch(err => console.error('載入詩作詳情失敗：', err));
+    });
+  </script>
+</body>
+</html>

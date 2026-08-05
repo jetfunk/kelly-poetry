@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kelly 的詩詞</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="assets/js/main.js" defer></script>
+</head>
+<body>
+  <!-- 首頁主視覺：標題與朱紅毛筆小印 -->
+  <header class="hero">
+    <div class="seal" aria-hidden="true">詩</div>
+    <h1>Kelly 的詩詞</h1>
+    <p class="subtitle">以詩記行旅，以詩寫四季</p>
+  </header>
+
+  <!-- 年份導航：由 main.js 依詩作資料動態建立紙籤 -->
+  <nav id="yearNav" class="paper-nav" aria-label="年份導覽"></nav>
+
+  <!-- 詩作卡片網格：由 main.js 依選中年份渲染 -->
+  <main id="poemGrid" class="poem-grid wrapper"></main>
+
+  <script>
+    // 待 defer 的 main.js 載入完成（DOMContentLoaded 前）後，再載入詩作並渲染首頁
+    document.addEventListener('DOMContentLoaded', () => {
+      loadPoems().then(renderIndex).catch(err => console.error('載入詩作失敗：', err));
+    });
+  </script>
+</body>
+</html>
