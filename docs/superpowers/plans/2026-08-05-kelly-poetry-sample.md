@@ -125,11 +125,26 @@ def test_parse_metadata_no_date():
     m = parse_metadata('【Take Me anywhere】.txt', '【Take Me anywhere】\n\n內容')
     assert m['title'] == 'Take Me anywhere'
     assert m['date'] == ''
+
+if __name__ == '__main__':
+    # 環境無 pytest：以腳本直接執行，逐一呼叫所有 test_* 函式
+    _tests = [(k, v) for k, v in sorted(globals().items())
+              if k.startswith('test_') and callable(v)]
+    _failed = 0
+    for _name, _fn in _tests:
+        try:
+            _fn()
+            print(f'PASS {_name}')
+        except AssertionError as _e:
+            _failed += 1
+            print(f'FAIL {_name}: {_e}')
+    print(f'{len(_tests)-_failed}/{len(_tests)} passed')
+    raise SystemExit(1 if _failed else 0)
 ```
 
 - [ ] **Step 2: 跑測試確認失敗**
 
-Run: `python -m pytest tools/test_parse_poems.py -v`（若無 pytest 則 `python tools/test_parse_poems.py`）
+Run: `python tools/test_parse_poems.py`
 Expected: 因 `temp_parse_poems` 不存在而 ImportError。
 
 - [ ] **Step 3: 實作 `temp_parse_poems.py`**
