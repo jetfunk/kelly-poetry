@@ -86,7 +86,8 @@ def _w(path, data, mode='w', encoding=None):
 def test_detect_big5():
     d = tempfile.mkdtemp()
     p = os.path.join(d, 'a.txt')
-    _w(p, '【竹】\n\n竹節常伸挺\n挺直向蒼穹'.encode('big5').decode('latin1'), 'wb' if False else 'w', 'latin1')
+    with open(p, 'wb') as f:
+        f.write('【竹】\n\n竹節常伸挺\n挺直向蒼穹'.encode('big5'))
     assert detect_encoding(p) == 'big5'
 
 def test_detect_utf8():
@@ -365,8 +366,19 @@ git commit -m "feat: 解析 8 首樣板詩作至 poems.json"
 
 - [ ] **Step 1: 轉成 comfyui 格式並放 `temp_output/poem-images/prompts.json`**
 
-先以 python 讀 `tools/image_prompts.json`，依 poems.json 順序輸出：
-`{"prompts": ["<prompt1>", ...]}`，存至 `temp_output/poem-images/prompts.json`。
+以 python 讀 `tools/image_prompts.json`，依 poems.json 順序輸出 prompts：
+```python
+# tools/temp_make_prompts.py
+import json, os
+poems = json.load(open('data/poems.json', encoding='utf-8'))
+img_prompts = json.load(open('tools/image_prompts.json', encoding='utf-8'))
+ordered = [img_prompts[p['id']] for p in poems]
+os.makedirs('temp_output/poem-images', exist_ok=True)
+json.dump({'prompts': ordered}, open('temp_output/poem-images/prompts.json', 'w', encoding='utf-8'), ensure_ascii=False)
+print(len(ordered), 'prompts')
+```
+Run: `python tools/temp_make_prompts.py`
+Expected: `8 prompts`，且 `temp_output/poem-images/prompts.json` 含 8 筆。
 
 - [ ] **Step 2: 先測試 1 張（驗證 workflow 可用）**
 
