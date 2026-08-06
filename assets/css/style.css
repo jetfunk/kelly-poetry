@@ -867,3 +867,10 @@ h1, h2, h3 {
     overflow: auto;
   }
 }
+
+/* --------------------------------------------------------------------------
+   18. 書視圖插圖（正文穿插）
+   -------------------------------------------------------------------------- */
+.book-figure { margin: 1.8rem auto; text-align: center; }
+.book-figure img { width: min(100%, 42em); border-radius: var(--radius-card); border: 1px solid rgba(74, 59, 36, .14); box-shadow: var(--shadow-soft); background: var(--paper-deep); }
+.book-figure img.is-missing { min-height: 160px; }

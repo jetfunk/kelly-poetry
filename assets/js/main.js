@@ -218,6 +218,21 @@ function renderBook(book) {
     tocList.appendChild(el);
   });
 
+  // 預處理插圖：依 at 排序、過濾 at 越界（越界丟棄並 console.warn）
+  book.chapters.forEach(ch => {
+    if (!Array.isArray(ch.illustrations)) return;
+    const lineCount = ch.body.split('\n').length;
+    ch.illustrations = ch.illustrations
+      .filter(it => {
+        const ok = Number.isInteger(it.at) && it.at >= 0 && it.at < lineCount;
+        if (!ok) {
+          console.warn(`[書]「${ch.title}」插圖 at=${it.at} 越界（正文 ${lineCount} 行），已略過`);
+        }
+        return ok;
+      })
+      .sort((a, b) => a.at - b.at);
+  });
+
   document.getElementById('prevBtn').addEventListener('click', () => {
     if (curChapter > 0) openChapter(curChapter - 1);
   });
@@ -229,15 +244,45 @@ function renderBook(book) {
 }
 
 /**
- * 開啟第 i 章：填入章節編號與標題、正文（textContent 安全輸出，
- * 靠 .reader-body 的 white-space: pre-line 保留原文換行），
+ * 開啟第 i 章：填入章節編號與標題、正文（逐字保留原文換行）；
+ * 有插圖的章節以拆行方式於 at 行後穿插 <figure>，無插圖維持 textContent。
  * 同步目前章標記與上下章按鈕狀態。
  */
 function openChapter(i) {
   const ch = BOOK.chapters[i];
   document.getElementById('readerNo').textContent = `第${CN[i] || (i + 1)}章`;
   document.getElementById('readerTitle').textContent = ch.title;
-  document.getElementById('readerBody').textContent = ch.body;
+  const readerBody = document.getElementById('readerBody');
+  const illus = (Array.isArray(ch.illustrations) ? ch.illustrations : [])
+    .filter(it => Number.isInteger(it.at));
+  if (!illus.length) {
+    // 無插圖章節：維持原本 textContent 行為（.reader-body 靠 pre-line 保留換行）
+    readerBody.textContent = ch.body;
+  } else {
+    // 有插圖：拆行逐一建立文字節（含 \n），並於 at 行後插入 <figure>
+    // 文字節串接結果 == ch.body（逐字，含 \n）
+    const byAt = new Map(illus.map(it => [it.at, it]));
+    const lines = ch.body.split('\n');
+    readerBody.textContent = '';
+    lines.forEach((line, ln) => {
+      readerBody.appendChild(document.createTextNode(line));
+      if (ln < lines.length - 1) {
+        readerBody.appendChild(document.createTextNode('\n'));
+      }
+      const it = byAt.get(ln);
+      if (it) {
+        const fig = document.createElement('figure');
+        fig.className = 'book-figure';
+        const img = document.createElement('img');
+        img.src = `assets/images/book/${it.file}`;
+        img.alt = it.alt || '';
+        img.loading = 'lazy';
+        img.onerror = () => { img.classList.add('is-missing'); };
+        fig.appendChild(img);
+        readerBody.appendChild(fig);
+      }
+    });
+  }
   curChapter = i;
   document.getElementById('prevBtn').disabled = i === 0;
   document.getElementById('nextBtn').disabled = i === BOOK.chapters.length - 1;
