@@ -518,3 +518,352 @@ h1, h2, h3 {
     animation: none !important;
   }
 }
+
+/* --------------------------------------------------------------------------
+   14. 詩詞書畫首頁：三藝頁籤 .tabs / .tab 與視圖切換 .view
+   -------------------------------------------------------------------------- */
+.tabs {
+  display: flex;
+  justify-content: center;
+  gap: 0.8rem;
+  padding: 1.8rem 1rem 2.2rem;
+}
+
+.tab {
+  font-family: var(--font-kai);
+  font-size: clamp(1.5rem, 3.6vw, 2.2rem);
+  letter-spacing: 0.3em;
+  line-height: 1;
+  color: var(--ink-faint);
+  padding: 0.55em 1.3em;
+  background: linear-gradient(180deg, #fffdf3, #f7ecc9);
+  border: 1px solid rgba(74, 59, 36, 0.16);
+  border-radius: var(--radius-chip);
+  box-shadow: 0 3px 0 rgba(74, 59, 36, 0.08), 0 8px 14px -8px rgba(74, 59, 36, 0.28);
+  cursor: pointer;
+  transition: 0.24s;
+  user-select: none;
+}
+
+.tab:hover {
+  color: var(--ink);
+  transform: translateY(-2px);
+}
+
+.tab.is-active {
+  background: linear-gradient(180deg, #f7e1ab, #ecd08e);
+  border-color: rgba(160, 48, 40, 0.35);
+  color: var(--cinnabar-deep);
+}
+
+/* 視圖切換：隱藏／顯示＋淡入 */
+.view {
+  display: none;
+  padding: 0 0 3.4rem;
+}
+
+.view.is-active {
+  display: block;
+  animation: viewFade 0.3s ease;
+}
+
+@keyframes viewFade {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* --------------------------------------------------------------------------
+   15. 書視圖：《我．獨一無二》章節閱讀
+   -------------------------------------------------------------------------- */
+.book-layout {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 1.8rem;
+  align-items: start;
+}
+
+.book-side {
+  position: sticky;
+  top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.3rem;
+  max-height: 86vh;
+}
+
+/* 書封 */
+.book-cover {
+  text-align: center;
+  padding: 1.6rem 1.3rem 1.4rem;
+  background: linear-gradient(180deg, var(--paper-light), #f1e6c6);
+  border: 1px solid rgba(74, 59, 36, 0.16);
+  border-radius: var(--radius-card);
+  box-shadow: 0 4px 0 rgba(74, 59, 36, 0.08), 0 18px 32px -18px rgba(74, 59, 36, 0.35);
+}
+
+.book-cover .seal-char {
+  display: inline-grid;
+  place-items: center;
+  width: 3.2rem;
+  height: 3.2rem;
+  font-family: var(--font-kai);
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #fff;
+  background: var(--cinnabar);
+  border: 2px solid var(--cinnabar-deep);
+  border-radius: var(--radius-seal);
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.5);
+  transform: rotate(-6deg);
+  margin-bottom: 0.8rem;
+}
+
+.book-title {
+  font-size: 1.9rem;
+  letter-spacing: 0.24em;
+  margin-bottom: 0.2rem;
+}
+
+.book-cover .author {
+  font-size: 0.98rem;
+  letter-spacing: 0.18em;
+  color: var(--ink-soft);
+}
+
+.book-cover .tagline {
+  margin-top: 0.7rem;
+  font-size: 0.88rem;
+  letter-spacing: 0.06em;
+  color: var(--ink-faint);
+  line-height: 1.8;
+}
+
+/* 目錄 */
+.toc {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 1rem 0.9rem;
+  background: rgba(255, 253, 245, 0.6);
+  border: 1px solid rgba(74, 59, 36, 0.12);
+  border-radius: 10px 16px 11px 18px / 16px 10px 18px 11px;
+  /* 21 章目錄高度可能超過 sticky 側欄，令其在側欄內捲動（桌面亦同） */
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+.toc-title {
+  font-family: var(--font-kai);
+  font-size: 1.05rem;
+  letter-spacing: 0.4em;
+  text-align: center;
+  color: var(--ink-soft);
+  padding-bottom: 0.3rem;
+  border-bottom: 1px dashed var(--khaki);
+  margin-bottom: 0.4rem;
+}
+
+.toc-item {
+  display: flex;
+  align-items: baseline;
+  gap: 0.7em;
+  width: 100%;
+  font-family: var(--font-kai);
+  font-size: 1rem;
+  letter-spacing: 0.06em;
+  color: var(--ink);
+  padding: 0.42em 0.7em;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  transition: 0.18s;
+}
+
+.toc-item .no {
+  color: var(--cinnabar);
+  font-size: 0.82rem;
+  letter-spacing: 0.05em;
+  flex: none;
+}
+
+.toc-item:hover {
+  background: rgba(201, 185, 144, 0.22);
+}
+
+.toc-item.is-active {
+  background: linear-gradient(90deg, rgba(160, 48, 40, 0.12), rgba(201, 185, 144, 0.22));
+  color: var(--cinnabar-deep);
+}
+
+/* 章節閱讀區 */
+.book-reader {
+  min-height: 60vh;
+  background: linear-gradient(180deg, var(--paper-light), #f8efd8);
+  border: 1px solid rgba(74, 59, 36, 0.13);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-soft);
+  padding: 2rem clamp(1.2rem, 4vw, 2.6rem) 2.4rem;
+}
+
+.reader-head {
+  text-align: center;
+  padding-bottom: 1.4rem;
+  border-bottom: 1px dashed var(--khaki);
+  margin-bottom: 1.6rem;
+}
+
+.reader-head .ch-no {
+  font-family: var(--font-kai);
+  font-size: 0.9rem;
+  letter-spacing: 0.4em;
+  color: var(--cinnabar);
+}
+
+.reader-head h3 {
+  font-size: clamp(1.5rem, 3.2vw, 2rem);
+  letter-spacing: 0.2em;
+  margin-top: 0.35rem;
+}
+
+.reader-body {
+  max-width: 42em;
+  margin-inline: auto;
+  font-size: clamp(1.05rem, 2vw, 1.18rem);
+  line-height: 2.15;
+  letter-spacing: 0.03em;
+  white-space: pre-line;
+}
+
+.reader-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 2.4rem;
+  padding-top: 1.2rem;
+  border-top: 1px dashed var(--khaki);
+}
+
+.reader-nav button {
+  font-family: var(--font-kai);
+  font-size: 0.98rem;
+  letter-spacing: 0.2em;
+  color: var(--cinnabar);
+  background: transparent;
+  border: 1px solid rgba(160, 48, 40, 0.35);
+  border-radius: var(--radius-chip);
+  padding: 0.45em 1.2em;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.reader-nav button:hover {
+  background: rgba(160, 48, 40, 0.08);
+}
+
+.reader-nav button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+/* --------------------------------------------------------------------------
+   16. 畫視圖：作品網格（資料驅動，目前為佔位）
+   -------------------------------------------------------------------------- */
+.art-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(250px, 100%), 1fr));
+  gap: var(--gap);
+}
+
+.art-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: linear-gradient(180deg, var(--paper-light), #f8efd8);
+  border: 1px solid rgba(74, 59, 36, 0.13);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-soft);
+  transition: box-shadow 0.24s, transform 0.24s;
+}
+
+.art-card:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-2px);
+}
+
+.art-card .thumb {
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  background: var(--paper-deep);
+}
+
+.art-card .thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.art-card .thumb.wash {
+  display: grid;
+  place-items: center;
+  background: linear-gradient(160deg, #fdf8ec, #efe4c9 55%, #dcd0ac);
+}
+
+.art-card .thumb.wash .char {
+  font-family: var(--font-kai);
+  font-size: 2.6rem;
+  color: var(--ink);
+}
+
+.art-card .card-body {
+  padding: 0.9rem 1.1rem 1rem;
+}
+
+.art-card h3 {
+  font-size: 1.2rem;
+  letter-spacing: 0.1em;
+}
+
+.art-card .meta {
+  margin-top: 0.5rem;
+  font-size: 0.84rem;
+  letter-spacing: 0.08em;
+  color: var(--ink-faint);
+  border-top: 1px dashed var(--khaki);
+  padding-top: 0.5rem;
+}
+
+/* 畫作尚未提供時的佔位提示卡 */
+.art-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 4.6rem 1.5rem;
+  font-family: var(--font-kai);
+  font-size: 1.25rem;
+  letter-spacing: 0.3em;
+  color: var(--ink-soft);
+  background: linear-gradient(180deg, var(--paper-light), #f8efd8);
+  border: 1px dashed var(--khaki);
+  border-radius: var(--radius-card);
+}
+
+/* --------------------------------------------------------------------------
+   17. 行動版式（≤900px）：書視圖改單欄、目錄限高可捲
+   -------------------------------------------------------------------------- */
+@media (max-width: 900px) {
+  .book-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .book-side {
+    position: static;
+    max-height: none;
+  }
+
+  .toc {
+    max-height: 15rem;
+    overflow: auto;
+  }
+}

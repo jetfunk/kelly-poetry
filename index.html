@@ -3,33 +3,86 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Kelly 的詩詞</title>
+  <title>KELLY 詩詞書畫</title>
   <link rel="stylesheet" href="assets/css/style.css">
   <script src="assets/js/main.js" defer></script>
 </head>
 <body>
   <!-- 首頁主視覺：標題與朱紅毛筆小印 -->
   <header class="hero">
-    <div class="seal" aria-hidden="true">詩</div>
-    <h1>Kelly 的詩詞</h1>
-    <p class="subtitle">以詩記行旅，以詩寫四季</p>
+    <div class="seal" aria-hidden="true">印</div>
+    <h1>KELLY 詩詞書畫</h1>
+    <p class="subtitle">以詩記行旅 · 以書傳心 · 以畫寫意</p>
   </header>
 
-  <!-- 年份導航：由 main.js 依詩作資料動態建立紙籤 -->
-  <nav id="yearNav" class="paper-nav" aria-label="年份導覽"></nav>
+  <!-- 詩／書／畫 三藝頁籤 -->
+  <nav class="tabs" aria-label="詩詞書畫切換">
+    <button class="tab is-active" data-view="poem">詩詞</button>
+    <button class="tab" data-view="book">書</button>
+    <button class="tab" data-view="painting">畫</button>
+  </nav>
 
-  <!-- 詩作卡片網格：由 main.js 依選中年份渲染 -->
-  <main id="poemGrid" class="poem-grid wrapper"></main>
+  <main class="wrapper">
+    <!-- 詩詞視圖：年份導航與詩作卡片由 main.js 依資料渲染 -->
+    <section id="view-poem" class="view is-active">
+      <nav id="yearNav" class="paper-nav" aria-label="年份導覽"></nav>
+      <div id="poemGrid" class="poem-grid"></div>
+    </section>
+
+    <!-- 書視圖：《我．獨一無二》章節閱讀，由 main.js 依 data/book.json 渲染 -->
+    <section id="view-book" class="view">
+      <div class="book-layout">
+        <aside class="book-side">
+          <div class="book-cover">
+            <span class="seal-char" aria-hidden="true">我</span>
+            <h2 class="book-title" id="bookTitle"></h2>
+            <div class="author" id="bookAuthor"></div>
+            <div class="tagline">一本關於與病共舞四十年<br>的生命記錄</div>
+          </div>
+          <nav class="toc" aria-label="目錄">
+            <div class="toc-title">目　錄</div>
+            <div id="tocList"></div>
+          </nav>
+        </aside>
+        <article class="book-reader">
+          <div class="reader-head">
+            <span class="ch-no" id="readerNo"></span>
+            <h3 id="readerTitle"></h3>
+          </div>
+          <div class="reader-body" id="readerBody"></div>
+          <div class="reader-nav">
+            <button id="prevBtn" type="button">上一章</button>
+            <button id="nextBtn" type="button">下一章</button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- 畫視圖：作品網格由 main.js 依 data/paintings.json 渲染 -->
+    <section id="view-painting" class="view">
+      <div id="artGrid" class="art-grid"></div>
+    </section>
+  </main>
 
   <script>
-    // 待 defer 的 main.js 載入完成（DOMContentLoaded 前）後，再載入詩作並渲染首頁
+    // 待 defer 的 main.js 載入完成（DOMContentLoaded 前）後，再載入詩作與書籍並渲染首頁
     document.addEventListener('DOMContentLoaded', () => {
-      loadPoems().then(renderIndex).catch(err => {
-        console.error('載入詩作失敗：', err);
-        // file:// 直接開啟時 CORS 會擋下 fetch，將可讀提示寫入卡片區
-        document.getElementById('poemGrid').innerHTML =
-          '詩作資料載入失敗。<br>請在專案資料夾執行 <code>python -m http.server 8000</code>，再用瀏覽器開啟 <code>http://127.0.0.1:8000/index.html</code>。';
-      });
+      Promise.all([loadPoems(), loadBook()])
+        .then(([poems, book]) => {
+          renderIndex(poems);
+          renderBook(book);
+          return loadPaintings();
+        })
+        .then(renderPaintings)
+        .catch(err => {
+          console.error('載入資料失敗：', err);
+          // file:// 直接開啟時 CORS 會擋下 fetch，將可讀提示寫入各視圖
+          const msg =
+            '資料載入失敗。<br>請在專案資料夾執行 <code>python -m http.server 8000</code>，再用瀏覽器開啟 <code>http://127.0.0.1:8000/index.html</code>。';
+          document.getElementById('view-poem').innerHTML = msg;
+          document.getElementById('view-book').innerHTML = msg;
+          document.getElementById('view-painting').innerHTML = msg;
+        });
     });
   </script>
 </body>

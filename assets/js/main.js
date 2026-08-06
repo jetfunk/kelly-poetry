@@ -1,16 +1,35 @@
 /* ==========================================================================
-   Kelly 的詩詞 — 前端渲染邏輯
+   KELLY 詩詞書畫 — 前端渲染邏輯
    --------------------------------------------------------------------------
-   負責載入 data/poems.json，並於主頁渲染年份導航與詩作卡片、
-   於詳情頁渲染單一詩作（含配圖）。
+   負責載入 data/poems.json（詩）、data/book.json（書）、
+   data/paintings.json（畫），於主頁以頁籤切換三藝視圖；
+   於詳情頁（poem.html）渲染單一詩作（含配圖）。
+   詩詞部分（loadPoems / renderIndex / showYear / renderDetail）
+   為既有功能，僅調整詳情頁標題字串，其餘原樣保留。
    -------------------------------------------------------------------------- */
 
-// 詩作資料來源（相對根目錄）
+// 資料來源（相對根目錄）
 const POEMS_URL = 'data/poems.json';
+const BOOK_URL = 'data/book.json';
+const PAINTINGS_URL = 'data/paintings.json';
 
 // 主頁狀態記憶（從詳情頁返回時，還原離開前的年份與捲動位置）
 const STORE_YEAR = 'kellyPoetry.year';
 const STORE_SCROLL = 'kellyPoetry.scroll';
+// 頁籤狀態記憶（詩詞｜書｜畫）
+const STORE_TAB = 'kellyPoetry.tab';
+
+// 章節中文數字編號（《我．獨一無二》共 21 章：一…廿一）
+const CN = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十',
+  '十一', '十二', '十三', '十四', '十五', '十六', '十七', '十八', '十九', '二十', '廿一'];
+
+// 書視圖目前章節索引（由 renderBook 初始化）
+let BOOK = null;
+let curChapter = 0;
+
+/* ==========================================================================
+   詩詞：載入與渲染（既有功能，原樣保留）
+   ========================================================================== */
 
 /**
  * 載入詩作資料。
@@ -137,7 +156,7 @@ async function renderDetail() {
     return;
   }
 
-  document.title = `${p.title} — Kelly 的詩詞`;
+  document.title = `${p.title} — KELLY 詩詞書畫`;
   detail.innerHTML = `
     <div class="detail-hero">
       <img src="${p.image}" alt="${p.title}">
@@ -164,5 +183,133 @@ async function renderDetail() {
       }
       // 無 referrer：保留 <a href="index.html"> 默認行為回首頁
     });
+  }
+}
+
+/* ==========================================================================
+   書：《我．獨一無二》章節閱讀（loadBook / renderBook / openChapter）
+   ========================================================================== */
+
+/** 載入書籍資料（章節 body 逐字保留原文）。 */
+async function loadBook() {
+  const res = await fetch(BOOK_URL);
+  return res.json();
+}
+
+/**
+ * 書視圖渲染：書封（書名／作者／tagline）＋ 21 章目錄，
+ * 並開啟第一章（含上一章／下一章按鈕與目錄目前章標記）。
+ */
+function renderBook(book) {
+  // 書視圖必然在首頁 DOMContentLoaded 後渲染，於此初始化頁籤
+  initTabs();
+
+  BOOK = book;
+  document.getElementById('bookTitle').textContent = book.title;
+  document.getElementById('bookAuthor').textContent = book.author;
+
+  const tocList = document.getElementById('tocList');
+  book.chapters.forEach((ch, i) => {
+    const el = document.createElement('button');
+    el.type = 'button';
+    el.className = 'toc-item';
+    el.innerHTML = `<span class="no">${CN[i] || (i + 1)}</span><span>${ch.title}</span>`;
+    el.addEventListener('click', () => openChapter(i));
+    tocList.appendChild(el);
+  });
+
+  document.getElementById('prevBtn').addEventListener('click', () => {
+    if (curChapter > 0) openChapter(curChapter - 1);
+  });
+  document.getElementById('nextBtn').addEventListener('click', () => {
+    if (curChapter < BOOK.chapters.length - 1) openChapter(curChapter + 1);
+  });
+
+  openChapter(0);
+}
+
+/**
+ * 開啟第 i 章：填入章節編號與標題、正文（textContent 安全輸出，
+ * 靠 .reader-body 的 white-space: pre-line 保留原文換行），
+ * 同步目前章標記與上下章按鈕狀態。
+ */
+function openChapter(i) {
+  const ch = BOOK.chapters[i];
+  document.getElementById('readerNo').textContent = `第${CN[i] || (i + 1)}章`;
+  document.getElementById('readerTitle').textContent = ch.title;
+  document.getElementById('readerBody').textContent = ch.body;
+  curChapter = i;
+  document.getElementById('prevBtn').disabled = i === 0;
+  document.getElementById('nextBtn').disabled = i === BOOK.chapters.length - 1;
+  document.querySelectorAll('.toc-item').forEach((el, j) =>
+    el.classList.toggle('is-active', j === i));
+}
+
+/* ==========================================================================
+   畫：作品網格（loadPaintings / renderPaintings，素材待補，先佔位）
+   ========================================================================== */
+
+/** 載入畫作資料。每筆未來為 {id, title, year, medium, image}。 */
+async function loadPaintings() {
+  const res = await fetch(PAINTINGS_URL);
+  return res.json();
+}
+
+/**
+ * 畫視圖渲染：資料目前為空陣列，顯示一張紙籤風佔位提示卡；
+ * 日後補入資料即自動改為逐筆渲染 .art-card（wash 封面＋標題＋meta）。
+ */
+function renderPaintings(data) {
+  const grid = document.getElementById('artGrid');
+  grid.innerHTML = '';
+  const list = (data && data.paintings) || [];
+
+  if (!list.length) {
+    const el = document.createElement('p');
+    el.className = 'art-empty';
+    el.textContent = '畫作整理中，敬請期待';
+    grid.appendChild(el);
+    return;
+  }
+
+  list.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'art-card';
+    card.innerHTML = `
+      <div class="thumb wash"><span class="char">${p.title.charAt(0)}</span></div>
+      <div class="card-body">
+        <h3>${p.title}</h3>
+        <div class="meta">
+          <span>${p.year}${p.medium ? `・${p.medium}` : ''}</span>
+        </div>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+/* ==========================================================================
+   頁籤：詩詞｜書｜畫 切換（initTabs）
+   ========================================================================== */
+
+/**
+ * 綁定首頁三個頁籤的點擊切換，並把目前頁籤存入 sessionStorage，
+ * 供重新載入／返回首頁時還原上次所在視圖（無記憶則維持預設詩詞）。
+ */
+function initTabs() {
+  const tabs = document.querySelectorAll('.tab');
+  if (!tabs.length) return;
+
+  const setTab = (view) => {
+    tabs.forEach(t => t.classList.toggle('is-active', t.dataset.view === view));
+    document.querySelectorAll('.view').forEach(v =>
+      v.classList.toggle('is-active', v.id === `view-${view}`));
+    sessionStorage.setItem(STORE_TAB, view);
+  };
+
+  tabs.forEach(t => t.addEventListener('click', () => setTab(t.dataset.view)));
+
+  const saved = sessionStorage.getItem(STORE_TAB);
+  if (saved && document.getElementById(`view-${saved}`)) {
+    setTab(saved);
   }
 }
