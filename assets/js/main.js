@@ -18,6 +18,8 @@ const STORE_YEAR = 'kellyPoetry.year';
 const STORE_SCROLL = 'kellyPoetry.scroll';
 // 頁籤狀態記憶（詩詞｜書｜畫）
 const STORE_TAB = 'kellyPoetry.tab';
+// 畫視圖分類記憶（畫竹｜纏繞畫）
+const STORE_ART_CAT = 'kellyPoetry.artCat';
 
 // 章節中文數字編號（《我．獨一無二》共 21 章：一…廿一）
 const CN = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十',
@@ -294,22 +296,26 @@ function openChapter(i) {
    畫：作品網格（loadPaintings / renderPaintings，素材待補，先佔位）
    ========================================================================== */
 
-/** 載入畫作資料。每筆未來為 {id, title, year, medium, image}。 */
+/** 載入畫作資料。每筆 {id, category, title, image}。 */
 async function loadPaintings() {
   const res = await fetch(PAINTINGS_URL);
   return res.json();
 }
 
 /**
- * 畫視圖渲染：資料目前為空陣列，顯示一張紙籤風佔位提示卡；
- * 日後補入資料即自動改為逐筆渲染 .art-card（wash 封面＋標題＋meta）。
+ * 畫視圖渲染：依 data.categories 建立分類導航（畫竹｜纏繞畫），
+ * 並顯示記憶中的分類（無記憶則第一類）。
  */
 function renderPaintings(data) {
   const grid = document.getElementById('artGrid');
-  grid.innerHTML = '';
+  const nav = document.getElementById('artNav');
+  if (!nav) return;
   const list = (data && data.paintings) || [];
+  const cats = (data && data.categories) || [];
 
-  if (!list.length) {
+  if (!cats.length) {
+    nav.innerHTML = '';
+    grid.innerHTML = '';
     const el = document.createElement('p');
     el.className = 'art-empty';
     el.textContent = '畫作整理中，敬請期待';
@@ -317,17 +323,59 @@ function renderPaintings(data) {
     return;
   }
 
+  // 建立分類 tab（沿用 .tab 視覺，但用獨立 .art-tab class，
+  // 避免與主視圖 .tab 的 querySelectorAll('.tab') 綁定衝突）
+  nav.innerHTML = '';
+  cats.forEach(c => {
+    const b = document.createElement('button');
+    b.className = 'art-tab';
+    b.textContent = c;
+    b.dataset.cat = c;
+    b.onclick = () => showArtCategory(c, list);
+    nav.appendChild(b);
+  });
+
+  // 預設顯示：記憶的分類若仍存在則用之；否則第一個分類
+  const saved = sessionStorage.getItem(STORE_ART_CAT);
+  const initial = (saved && cats.includes(saved)) ? saved : cats[0];
+  showArtCategory(initial, list);
+}
+
+/**
+ * 依分類過濾並渲染畫作卡片（純圖片卡，不顯示標題）。
+ * 圖片路徑只對檔名最後一段 encodeURIComponent（詩作先例），
+ * 避免把 `/` 也編碼。
+ */
+function showArtCategory(cat, paintings) {
+  sessionStorage.setItem(STORE_ART_CAT, String(cat));
+  document.querySelectorAll('.art-tab').forEach(b =>
+    b.classList.toggle('is-active', b.dataset.cat === String(cat)));
+
+  const grid = document.getElementById('artGrid');
+  grid.innerHTML = '';
+
+  const list = paintings.filter(p => p.category === cat);
+  if (!list.length) {
+    const el = document.createElement('p');
+    el.className = 'art-empty';
+    el.textContent = `${cat}整理中，敬請期待`;
+    grid.appendChild(el);
+    return;
+  }
+
+  const dir = 'assets/images/paintings/';
   list.forEach(p => {
     const card = document.createElement('div');
     card.className = 'art-card';
-    card.innerHTML = `
-      <div class="thumb wash"><span class="char">${p.title.charAt(0)}</span></div>
-      <div class="card-body">
-        <h3>${p.title}</h3>
-        <div class="meta">
-          <span>${p.year}${p.medium ? `・${p.medium}` : ''}</span>
-        </div>
-      </div>`;
+    const fig = document.createElement('div');
+    fig.className = 'thumb';
+    const img = document.createElement('img');
+    img.src = dir + encodeURIComponent(p.image.split('/').pop());
+    img.alt = p.title || p.id;
+    img.loading = 'lazy';
+    img.onerror = () => fig.classList.add('is-missing');
+    fig.appendChild(img);
+    card.appendChild(fig);
     grid.appendChild(card);
   });
 }
