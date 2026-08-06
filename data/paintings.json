@@ -1,4 +1,195 @@
 {
-  "note": "畫作品資料結構（素材待提供，先佔位）。每筆：{id, title, year, medium, image}，image 為 assets/images/paintings/<id>.jpg。",
-  "paintings": []
+  "note": "畫作品資料。每筆：{id, category, title, image}，image 為 assets/images/paintings/<檔名>（中文檔名由前端 encodeURIComponent）。",
+  "categories": [
+    "畫竹",
+    "纏繞畫"
+  ],
+  "paintings": [
+    {
+      "id": "畫竹-01",
+      "category": "畫竹",
+      "title": "",
+      "image": "assets/images/paintings/畫竹-01.jpg"
+    },
+    {
+      "id": "畫竹-02",
+      "category": "畫竹",
+      "title": "",
+      "image": "assets/images/paintings/畫竹-02.jpg"
+    },
+    {
+      "id": "畫竹-03",
+      "category": "畫竹",
+      "title": "",
+      "image": "assets/images/paintings/畫竹-03.jpg"
+    },
+    {
+      "id": "畫竹-04",
+      "category": "畫竹",
+      "title": "",
+      "image": "assets/images/paintings/畫竹-04.jpg"
+    },
+    {
+      "id": "畫竹-05",
+      "category": "畫竹",
+      "title": "",
+      "image": "assets/images/paintings/畫竹-05.jpg"
+    },
+    {
+      "id": "畫竹-06",
+      "category": "畫竹",
+      "title": "",
+      "image": "assets/images/paintings/畫竹-06.jpg"
+    },
+    {
+      "id": "畫竹-07",
+      "category": "畫竹",
+      "title": "",
+      "image": "assets/images/paintings/畫竹-07.jpg"
+    },
+    {
+      "id": "畫竹-08",
+      "category": "畫竹",
+      "title": "",
+      "image": "assets/images/paintings/畫竹-08.jpg"
+    },
+    {
+      "id": "畫竹-09",
+      "category": "畫竹",
+      "title": "",
+      "image": "assets/images/paintings/畫竹-09.jpg"
+    },
+    {
+      "id": "畫竹-10",
+      "category": "畫竹",
+      "title": "",
+      "image": "assets/images/paintings/畫竹-10.jpg"
+    },
+    {
+      "id": "畫竹-11",
+      "category": "畫竹",
+      "title": "",
+      "image": "assets/images/paintings/畫竹-11.jpg"
+    },
+    {
+      "id": "畫竹-12",
+      "category": "畫竹",
+      "title": "",
+      "image": "assets/images/paintings/畫竹-12.jpg"
+    },
+    {
+      "id": "畫竹-13",
+      "category": "畫竹",
+      "title": "",
+      "image": "assets/images/paintings/畫竹-13.jpg"
+    },
+    {
+      "id": "畫竹-14",
+      "category": "畫竹",
+      "title": "",
+      "image": "assets/images/paintings/畫竹-14.jpg"
+    },
+    {
+      "id": "畫竹-15",
+      "category": "畫竹",
+      "title": "",
+      "image": "assets/images/paintings/畫竹-15.jpg"
+    },
+    {
+      "id": "畫竹-16",
+      "category": "畫竹",
+      "title": "",
+      "image": "assets/images/paintings/畫竹-16.jpg"
+    },
+    {
+      "id": "畫竹-17",
+      "category": "畫竹",
+      "title": "",
+      "image": "assets/images/paintings/畫竹-17.jpg"
+    },
+    {
+      "id": "畫竹-18",
+      "category": "畫竹",
+      "title": "",
+      "image": "assets/images/paintings/畫竹-18.jpg"
+    },
+    {
+      "id": "畫竹-19",
+      "category": "畫竹",
+      "title": "",
+      "image": "assets/images/paintings/畫竹-19.jpg"
+    },
+    {
+      "id": "畫竹-20",
+      "category": "畫竹",
+      "title": "",
+      "image": "assets/images/paintings/畫竹-20.jpg"
+    },
+    {
+      "id": "畫竹-21",
+      "category": "畫竹",
+      "title": "",
+      "image": "assets/images/paintings/畫竹-21.jpg"
+    },
+    {
+      "id": "畫竹-22",
+      "category": "畫竹",
+      "title": "",
+      "image": "assets/images/paintings/畫竹-22.jpg"
+    },
+    {
+      "id": "畫竹-23",
+      "category": "畫竹",
+      "title": "",
+      "image": "assets/images/paintings/畫竹-23.jpg"
+    },
+    {
+      "id": "畫竹-24",
+      "category": "畫竹",
+      "title": "",
+      "image": "assets/images/paintings/畫竹-24.jpg"
+    },
+    {
+      "id": "畫竹-25",
+      "category": "畫竹",
+      "title": "",
+      "image": "assets/images/paintings/畫竹-25.jpg"
+    },
+    {
+      "id": "畫竹-26",
+      "category": "畫竹",
+      "title": "",
+      "image": "assets/images/paintings/畫竹-26.jpg"
+    },
+    {
+      "id": "畫竹-27",
+      "category": "畫竹",
+      "title": "",
+      "image": "assets/images/paintings/畫竹-27.jpg"
+    },
+    {
+      "id": "畫竹-28",
+      "category": "畫竹",
+      "title": "",
+      "image": "assets/images/paintings/畫竹-28.jpg"
+    },
+    {
+      "id": "畫竹-29",
+      "category": "畫竹",
+      "title": "",
+      "image": "assets/images/paintings/畫竹-29.jpg"
+    },
+    {
+      "id": "畫竹-30",
+      "category": "畫竹",
+      "title": "",
+      "image": "assets/images/paintings/畫竹-30.jpg"
+    },
+    {
+      "id": "竹卡",
+      "category": "畫竹",
+      "title": "",
+      "image": "assets/images/paintings/竹卡.png"
+    }
+  ]
 }
