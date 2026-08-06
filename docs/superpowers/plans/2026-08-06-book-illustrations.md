@@ -14,7 +14,7 @@
 - `data/book.json` 每章 **`body` 逐字不動**（重組==原文的既有承諾，見 `tools/temp_parse_book.py`）。
 - 詩詞 495 首 `poems.json`、495 張圖、`assets/js/main.js` 詩詞函式（`loadPoems`/`renderIndex`/`showYear`/`renderDetail`）**零改動**。
 - 插圖 **人物不露臉**（背影／側影／遠景，prompt 含 `faces not visible` 類修飾）；內容只取自原文實際出現的事物。
-- 圖檔 **1280×853（3:2）**；prompt 統一後綴 `, soft watercolor Chinese ink painting, warm cream paper texture, gentle light, serene, <emotion>`。
+- 圖檔 **1280×848（3:2）**；prompt 統一後綴 `, soft watercolor Chinese ink painting, warm cream paper texture, gentle light, serene, <emotion>`。
 - 張數門檻：≤200 字 0 張、201–400 字 1 張、401–1500 字 1–2 張、>1500 字 2–3 張。
 - 不配樂、不更動畫視圖與詩詞視圖既有樣式。
 
@@ -114,7 +114,7 @@ git commit -m "feat: 書插圖範例 3 章插入點與 prompt 清單"
 - Consumes: `tools/book_prompts.json`（Task 2）
 
 **Interfaces:**
-- Produces: `assets/images/book/<chID>-<n>.jpg`（1280×853）。
+- Produces: `assets/images/book/<chID>-<n>.jpg`（1280×848）。
 
 - [ ] **Step 1: 檢查 ComfyUI 在線**
 
